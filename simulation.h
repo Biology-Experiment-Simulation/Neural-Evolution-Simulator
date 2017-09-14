@@ -1,5 +1,3 @@
-#ifndef SIMULATION_H
-#define SIMULATION_H
 #pragma once
 #include "neuralNet/Net.h"
 #include <SFML/Graphics.hpp>
@@ -18,13 +16,15 @@
 
 class Simulation{
 private:
+    int animalCount = 10;
+    int simulationTime = 1500;
 
 public:
     std::vector<NN::Net> brains;
     std::vector<float> input, output;
     sf::CircleShape animal[10],food[10];
     std::vector<float> bestWeights, secondbestWeights;
-    int firstBest, secondBest;
+    int firstBest = 0; int secondBest = 0;
 
     Simulation();
     ~Simulation();
@@ -34,8 +34,9 @@ public:
     void setNetTopology(unsigned inputSize, unsigned hiddenLayerSize, unsigned hiddenLayers, unsigned outputSize);
     void createAnimals();
     void createFood();
-    void runSimulation();
+    void runSimulation(sf::RenderWindow& window);
     void setClosestFood(int creatureId);
+    void setTwoBestAnimals();
     void evolve();
     void proccessCreatures();
 
@@ -44,31 +45,3 @@ public:
 
 };
 
-
-
-
-
-
-
-/// .......... Neural net Settings Data .............. //////////////
-   // int firstBest, secondBest;
-   // std::vector<float> bestWeights, secondbestWeights;
-
-
-
-
-/// ....... Create the window of the application . //////////////////////////
-
-   // sf::RenderWindow window(sf::VideoMode(800, 600, 32), "Neural-Evolution balls");
-
-    /// //////////////////// FOOD  //////////////////////////// ////////////
-        // Create the food
-
-     /// //////////////////// animals  //////////////////////////// ////////////
-
-
-
-
-
-
-#endif // SIMULATION_H

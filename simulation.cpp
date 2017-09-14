@@ -3,16 +3,11 @@
 Simulation::Simulation()
 {
     this->input.resize(4);
-
-    //sf::CircleShape animal[10];
-    ///sf::CircleShape food[10];
-   // this->window = sf::RenderWindow(sf::VideoMode(800, 600, 32), "Neural-Evolution balls");
-  //  this->window.setVerticalSyncEnabled(true);
 }
 
 Simulation::~Simulation()
 {
-    //dtor
+
 }
 
 float Simulation::distance(float x1, float x2, float y1, float y2)
@@ -36,7 +31,7 @@ void Simulation::createFood(){
 
         // Create the food
 void Simulation::createAnimals(){
-    this->firstBest = 0; this->secondBest = 0;/// INPUTS
+    //this->firstBest = 0; this->secondBest = 0;/// INPUTS
     for(int i=0;i<10;i++){
        NN::Net c(4,3,7,2);
         this->brains.push_back(c);
@@ -112,6 +107,31 @@ void Simulation::setClosestFood(int creatureId)
 
 }
 
+void Simulation::setTwoBestAnimals()
+{
+    std::cout << "fitness scores" << std::endl;
+    int c =0;
+    int scoreA=-4000;
+    int scoreB=-4000;
+    for (auto& it : this->brains)
+    {
+        std::cout << it.fitnessScore << std::endl;
+        if(it.fitnessScore > scoreA)
+        {
+            scoreA = it.fitnessScore;
+            scoreB = scoreA;
+            this->secondBest = this->firstBest;
+            this->firstBest = c;
+        }
+        else if(it.fitnessScore > scoreB)
+        {
+            scoreB = it.fitnessScore;
+            this->secondBest = c;
+        }
+        c++;
+    }
+    std::cout << "first best = " << this->firstBest << "second best = " << this->secondBest << std::endl;
+}
 
 void Simulation::proccessCreatures()
 {
@@ -173,4 +193,92 @@ void Simulation::proccessCreatures()
                         }
 
                     }
+}
+
+void Simulation::runSimulation(sf::RenderWindow& window)
+{
+    bool isPlaying = false;
+    sf::Clock AITimer;
+    sf::Clock clock;
+    const sf::Time AITime = sf::seconds(0.004f);
+
+    while (window.isOpen())
+    {
+        // Handle events
+        sf::Event event;
+        while ( window.pollEvent(event))
+        {
+            if ((event.type == sf::Event::Closed) ||
+            ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
+            {
+                window.close();
+                break;
+            }
+        }
+
+        if (!isPlaying)
+        {
+            isPlaying = true;
+            for (int i=0; i<10; i++)
+            {
+                this->food[i].setPosition(rands(0,800),rands(0,600));
+            }
+            for (int i=0; i<10; i++)
+            {
+                this->animal[i].setPosition(rands(0,800),rands(0,600));
+                this->setClosestFood(i);
+            }
+            clock.restart();
+        }
+
+        if (isPlaying)
+        {
+            if (AITimer.getElapsedTime() > AITime)
+            {
+                /// One Generation time
+                this->simulationTime--;
+                if(this->simulationTime == 0)
+                {
+                    this->setTwoBestAnimals();
+                    this->evolve();
+
+                    for(int i=0; i<10; i++)
+                    {
+                        this->animal[i].setPosition(rands(0,800),rands(0,600));
+                        this->brains[i].fitnessScore = 0;
+                    }
+                    this->firstBest = 0;
+                    this->secondBest = 0;
+                    this->simulationTime =1499;
+                    isPlaying = false;
+                }
+                if(this->simulationTime%500 == 0)
+                {
+                    for (int i=0; i<10; i++)
+                    {
+                        this->food[i].setPosition(rands(0,800),rands(0,600));
+                    }
+                    for (int i=0; i<10; i++)
+                    {
+                        this->animal[i].setPosition(rands(444,600),rands(200,500));
+                        this->setClosestFood(i);
+                    }
+                }
+                AITimer.restart();
+                this->proccessCreatures();
+
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            {
+            }
+        }
+        /// RENDER ALL /////////////////////////////////
+        window.clear(sf::Color(20, 10, 250));
+        for(int i=0; i<this->brains.size(); i++)
+        {
+            window.draw(this->animal[i]);
+            window.draw(this->food[i]);
+        }
+        window.display();
+    }
 }
