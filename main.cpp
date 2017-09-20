@@ -19,8 +19,8 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     Simulation sim;
-    sim.createFood();
-    sim.createAnimals();
+    sim.createFood(10);
+    sim.createAnimals(10);
     sim.runSimulation(window);
 
     return EXIT_SUCCESS;

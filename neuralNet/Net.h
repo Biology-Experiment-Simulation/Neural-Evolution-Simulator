@@ -15,6 +15,7 @@ private:
     std::vector<Neuron> m_Neurons;
 public:
     Net(int inputSize, int hiddenLayers, int hiddenLayerSize, int outputSize);
+    ~Net();
 
     std::vector<float> feedForward(std::vector<float>& input);
     void backPropagation(float errors, float learningRate);

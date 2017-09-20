@@ -37,6 +37,11 @@ Net::Net(int inputSize, int hiddenLayers, int hiddenLayersSize, int outputSize)
 
 }
 
+Net::~Net()
+{
+   std::cout << "NET destroyed!" << "\n";
+}
+
 std::vector<float> Net::feedForward(std::vector<float>& input)
 {
     unsigned cN = 0; /// current Neuron to be activated;
@@ -47,18 +52,12 @@ std::vector<float> Net::feedForward(std::vector<float>& input)
     temp_input.resize(1);
     for(int i=0;i<m_InputlayerSize;i++)
         {
-
              last_layer_output.push_back(input[cN]);
             cN++;
         }
         last_layer_output.push_back(-1.0f);
         cN++;
-
-
     /// ////////// perform activations on hidden layers ///////////////////////////////////
-
-
-
     for(int i=1; i<=m_hiddenLayers;i++)
     {
         temp_input.clear();
@@ -67,17 +66,12 @@ std::vector<float> Net::feedForward(std::vector<float>& input)
             m_Neurons[cN].SetInputs(last_layer_output);
             m_Neurons[cN].Activate();
             temp_input.push_back( m_Neurons[cN].GetOutput());
-            //std::cout <<  "neuron output number: " << cN << " " << m_Neurons[cN].GetOutput()  << std::endl;
             cN++;
          }
-         ///m_Neurons[cN].Activate();  /// bias
-         //last_layer_output.clear();
          temp_input.push_back(-1.0f);
          last_layer_output = temp_input;
-        // std::cout <<  "neuron output number: " << cN << " " << m_Neurons[cN].GetOutput()  << std::endl;
          cN++;
     }
-
     /// ////// output layer create neurons  /////////////////////
     temp_input.clear();
     for(int i=0; i<m_outputLayerSize;i++)
@@ -85,7 +79,6 @@ std::vector<float> Net::feedForward(std::vector<float>& input)
             m_Neurons[cN].SetInputs(last_layer_output);
             m_Neurons[cN].Activate();
             temp_input.push_back( m_Neurons[cN].GetOutput());
-          //  std::cout <<  "neuron output number: " << cN << " " << m_Neurons[cN].GetOutput()  << std::endl;
             cN++;
         }
 
