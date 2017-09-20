@@ -7,8 +7,6 @@
 #include <SFML/Graphics.hpp>
 
 /// .......... Random functions Data .............. //////////////
-    static std::random_device rd;
-    static std::mt19937 mt(rd());
     static std::uniform_real_distribution<float> randomVal(-3.2, 3.4);
     static std::uniform_int_distribution<int> uniform_dist(0, 42);
 

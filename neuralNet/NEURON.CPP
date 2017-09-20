@@ -18,6 +18,11 @@ Neuron::Neuron(int inputSize, int layer)
 
 }
 
+Neuron::~Neuron()
+{
+   ///std::cout << "Neuron destroyed!" << "\n";
+}
+
     void Neuron::Activate()
     {
         if(m_weights.size() != 0) /// if has any inputs, else it's bias with predifened output of -1;

@@ -26,6 +26,7 @@ namespace NN{
         std::vector<float> m_inputs;
     public:
         Neuron(int inputSize, int layer);
+        ~Neuron();
 
         void SetWeights(std::vector<float>& weights);
         void GetWeights(std::vector<float>& weights);
