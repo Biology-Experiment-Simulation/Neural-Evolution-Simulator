@@ -28,3 +28,21 @@ std::vector<int> animal::getPosition()
     pos.push_back(this->shape.getPosition().y);
     return pos;
 }
+
+void animal::crossover(animal& matingPartner)
+{
+     std::vector<int> brainWeights, matingBrainWeights;
+     brain.getWeights(brainWeights);
+     matingPartner.getWeights(matingBrainWeights);
+
+
+            std::uniform_int_distribution<int> uniform_dist(0, brainWeights.size());
+            int crossover = uniform_dist(mt);
+
+            for(int j=crossover;j< brainWeights.size() ;j++)
+            {
+                brainWeights[j] = matingBrainWeights[j];
+            }
+            brain.setWeights(brainWeights);
+
+}

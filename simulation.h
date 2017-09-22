@@ -8,14 +8,17 @@
 
 /// .......... Random functions Data .............. //////////////
     static std::uniform_real_distribution<float> randomVal(-3.2, 3.4);
+    static std::uniform_real_distribution<float> randomInput(-0.2, 0.21);
     static std::uniform_int_distribution<int> uniform_dist(0, 42);
 
     typedef std::shared_ptr<NN::Net> NetPtr;
+    typedef std::shared_ptr<animal> animalPtr;
+    typedef std::shared_ptr<food> foodPtr;
 
 
 class Simulation{
 private:
-    int animalCount = 10;
+   // int animalCount = 10;
     int simulationTime = 1500;
     std::vector<float> input, output;
     sf::CircleShape animaly[10];

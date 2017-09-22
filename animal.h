@@ -12,7 +12,7 @@ class animal
         animal();
         virtual ~animal();
 
-        void runAnimal(std::vector<int> input);
+        void runAnimal(std::vector<int>& input);
         void setPosition(int x, int y);
         std::vector<int> getPosition();
         void draw(sf::RenderWindow& window);

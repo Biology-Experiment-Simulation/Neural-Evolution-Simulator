@@ -25,7 +25,10 @@ float Simulation::distance(std::vector<int> animalPos, std::vector<int> FoodPos)
 
 void Simulation::createFood(int number){
 
-    this->foods.resize(number);
+    for(int i=0;i<number;i++){
+       std::shared_ptr<food> f(new food());
+        this->foods.push_back(f);
+    }
 
      for (int i=0;i<10;i++){
     this->foody[i].setRadius(10 + 4);
@@ -35,13 +38,15 @@ void Simulation::createFood(int number){
     this->foody[i].setOrigin(10 / 2, 10 / 2);
     this->foody[i].setPosition(rands(0,800),rands(0,600));
     }
-    std::cout << " created "  << number << " animals" << "/n" ;
+    std::cout << " created "  << number << "new food" << "\n" ;
 }
 
 void Simulation::createAnimals(int number){
     //this->firstBest = 0; this->secondBest = 0;/// INPUTS
-    this->animals.resize(number);
-
+    for(int i=0;i<number;i++){
+       std::shared_ptr<animal> a(new animal());
+        this->animals.push_back(a);
+    }
     for(int i=0;i<10;i++){
        std::shared_ptr<NN::Net> c(new NN::Net(4,3,7,2));
         this->brains.push_back(c);
@@ -149,15 +154,15 @@ void Simulation::proccessCreatures()
                         int j = (*brains[i]).closestFood;
 
                         if(this->foody[j].getPosition().x < animaly[i].getPosition().x){/// na lewo
-                            this->input[0]=1.0f;this->input[1]=-1.0f;
+                            this->input[0]=1.0f + randomInput(mt);this->input[1]=-1.0f + randomInput(mt);
                         }else if(this->foody[j].getPosition().x > this->animaly[i].getPosition().x){ /// na prawo
-                            this->input[0]=-1.0f;this->input[1]=1.0f;
+                            this->input[0]=-1.0f + randomInput(mt);this->input[1]=1.0f + randomInput(mt);
                         }
                         /// Creatures Brain inputs/ outputs
                          if(this->foody[j].getPosition().y < this->animaly[i].getPosition().y){   /// nizej
-                            this->input[2]=1.0f;this->input[3]=-1.0f;
+                            this->input[2]=1.0f + randomInput(mt);this->input[3]=-1.0f + randomInput(mt);
                         }else if(this->foody[j].getPosition().y > this->animaly[i].getPosition().y){  /// wyzej
-                            this->input[2]=-1.0f;this->input[3]=1.0f;
+                            this->input[2]=-1.0f + randomInput(mt) ;this->input[3]=1.0f + randomInput(mt);
                         }
                          this->output = (*brains[i]).feedForward(this->input);
                         this->animaly[i].move(this->output[0]*4,this->output[1]*4);
