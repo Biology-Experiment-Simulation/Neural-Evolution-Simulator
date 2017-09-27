@@ -18,17 +18,18 @@
 
 class Simulation{
 private:
-   // int animalCount = 10;
     int simulationTime = 1500;
     std::vector<float> input, output;
-    sf::CircleShape animaly[10];
-    sf::CircleShape foody[10];
     std::vector<float> bestWeights, secondbestWeights;
-    int firstBest = 0; int secondBest = 0;
+    unsigned firstBest = 0; unsigned secondBest = 0;
 
-    std::vector<animal> animals;
-    std::vector<food> foods;
-    std::vector<NetPtr> brains;
+    std::vector<animalPtr> animals;
+    std::vector<foodPtr> foods;
+
+
+    sf::CircleShape animaly[10];  /// LEGACY
+    sf::CircleShape foody[10];  /// LEGACY
+    std::vector<NetPtr> brains; /// LEGACY
 
     void setClosestFood(int creatureId);
     void setTwoBestAnimals();

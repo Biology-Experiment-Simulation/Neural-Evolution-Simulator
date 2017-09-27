@@ -28,3 +28,8 @@ std::vector<int> food::getPosition()
     pos.push_back(this->shape.getPosition().y);
     return pos;
 }
+
+void food::draw(sf::RenderWindow& window)
+{
+      window.draw(this->shape);
+}

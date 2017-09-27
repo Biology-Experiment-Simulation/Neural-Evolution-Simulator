@@ -12,19 +12,22 @@ class animal
         animal();
         virtual ~animal();
 
+        NN::Net brain;
+        int fitnessScore = 0;
+        unsigned closestFood = 0;
+
         void runAnimal(std::vector<int>& input);
         void setPosition(int x, int y);
         std::vector<int> getPosition();
         void draw(sf::RenderWindow& window);
         void crossover(animal& matingPartner);
         void mutate();
+        void setNewBrainWeights(std::vector<float>& newWeights);
         void resetBrain();
         void resetFitnessScore();
 
     protected:
 
     private:
-        NN::Net brain;
         sf::CircleShape shape;
-        int fitnessScore = 0;
 };

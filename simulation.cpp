@@ -29,7 +29,7 @@ void Simulation::createFood(int number){
        std::shared_ptr<food> f(new food());
         this->foods.push_back(f);
     }
-
+ /// //////////////// LEGACY //////////////////////////
      for (int i=0;i<10;i++){
     this->foody[i].setRadius(10 + 4);
     this->foody[i].setOutlineThickness(2);
@@ -51,7 +51,7 @@ void Simulation::createAnimals(int number){
        std::shared_ptr<NN::Net> c(new NN::Net(4,3,7,2));
         this->brains.push_back(c);
     }
-
+ /// //////////////// LEGACY //////////////////////////
     for (int i=0;i<10;i++){
      animaly[i].setRadius(10 + 3);
      animaly[i].setOutlineThickness(2);
@@ -66,12 +66,26 @@ void Simulation::createAnimals(int number){
 
 void Simulation::evolve()
 {
-    int crossover = uniform_dist(mt);int mutate = uniform_dist(mt);
+   // int crossover = uniform_dist(mt);int mutate = uniform_dist(mt);
 
-    (*brains[firstBest]).getWeights(bestWeights);
-    (*brains[this->secondBest]).getWeights(this->secondbestWeights);
+    (*animals[firstBest]).brain.getWeights(bestWeights);
+    (*animals[secondBest]).brain.getWeights(secondbestWeights);
 
-    std::vector<float> temps; temps.resize(this->bestWeights.size());
+    (*animals[0]).setNewBrainWeights(bestWeights);
+    (*animals[1]).setNewBrainWeights(secondbestWeights);
+
+
+    for(unsigned i =2; i < animals.size() - 2; i++)
+    {
+        (*animals[i]).crossover((*animals[0]));
+    }
+
+    (*animals[animals.size()-1]).resetBrain();
+    (*animals[animals.size()-2]).resetBrain();
+
+
+    /// //////////////// LEGACY //////////////////////////
+    /*std::vector<float> temps; temps.resize(this->bestWeights.size());
     for(int i=5; i<8;i++)
         {
             crossover = uniform_dist(mt);
@@ -94,19 +108,35 @@ void Simulation::evolve()
         this->bestWeights[mutate] =randomVal(mt);
         (*brains[4]).setWeights(this->bestWeights);
 
-     for(int i=0;i<temps.size();i++){
+    for(int i=0;i<temps.size();i++){
         temps[i] = randomVal(mt);}
      (*brains[8]).setWeights(temps);
     for(int i=0;i<temps.size();i++){
         temps[i] = randomVal(mt);}
     (*brains[9]).setWeights(temps);
-
+    */
 }
 
 void Simulation::setClosestFood(int creatureId)
 {
-    float closestDistance=99999;
-    int closestId;
+     int closestId;
+     float closestDistance=99999;
+     float tempdistance; unsigned tempId = 0;
+     for (auto& food : foods)
+     {
+        tempdistance = distance((*animals[creatureId]).getPosition(),(*food).getPosition());
+        if(tempdistance < closestDistance)
+       {
+           closestDistance = tempdistance;
+           closestId = tempId;
+       }
+       tempId++;
+     }
+     (*animals[creatureId]).closestFood = closestId;
+
+
+ /// //////////////// LEGACY //////////////////////////
+    closestDistance=99999;
     float tempdist;
     for(int i = 0; i<10; i++)
     {
@@ -123,10 +153,33 @@ void Simulation::setClosestFood(int creatureId)
 
 void Simulation::setTwoBestAnimals()
 {
-    std::cout << "fitness scores" << std::endl;
     int c =0;
     int scoreA=-4000;
     int scoreB=-4000;
+
+    for (auto& animal : animals )
+    {
+        std::cout << (*animal).fitnessScore << std::endl;
+        if((*animal).fitnessScore > scoreA)
+        {
+            scoreA = (*animal).fitnessScore;
+            scoreB = scoreA;
+            this->secondBest = this->firstBest;
+            this->firstBest = c;
+        }
+        else if((*animal).fitnessScore > scoreB)
+        {
+            scoreB = (*animal).fitnessScore;
+            this->secondBest = c;
+        }
+        c++;
+    }
+
+/// //////////////// LEGACY //////////////////////////
+    std::cout << "fitness scores" << std::endl;
+     c =0;
+     scoreA=-4000;
+     scoreB=-4000;
     for (auto& it : brains)
     {
         std::cout << (*it).fitnessScore << std::endl;
@@ -149,6 +202,13 @@ void Simulation::setTwoBestAnimals()
 
 void Simulation::proccessCreatures()
 {
+    unsigned animalID = 0;
+     for (auto& animal : animals)
+    {
+        setClosestFood(animalID);
+    }
+
+    /// //////////////// LEGACY //////////////////////////
      for(int i=0; i<brains.size(); i++)
                     {
                         int j = (*brains[i]).closestFood;

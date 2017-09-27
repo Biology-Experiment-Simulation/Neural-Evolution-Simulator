@@ -31,18 +31,60 @@ std::vector<int> animal::getPosition()
 
 void animal::crossover(animal& matingPartner)
 {
-     std::vector<int> brainWeights, matingBrainWeights;
+     std::vector<float> brainWeights, matingBrainWeights;
      brain.getWeights(brainWeights);
-     matingPartner.getWeights(matingBrainWeights);
+     matingPartner.brain.getWeights(matingBrainWeights);
 
 
             std::uniform_int_distribution<int> uniform_dist(0, brainWeights.size());
             int crossover = uniform_dist(mt);
-
-            for(int j=crossover;j< brainWeights.size() ;j++)
+            for(int j = crossover; j < brainWeights.size(); j++)
             {
                 brainWeights[j] = matingBrainWeights[j];
             }
             brain.setWeights(brainWeights);
 
+}
+
+void animal::mutate()
+{
+    std::vector<float> brainWeights; brain.getWeights(brainWeights);
+
+    std::uniform_int_distribution<int> uniform_dist(0, brainWeights.size());
+    std::uniform_real_distribution<float> float_dist(-3.2, 3.2);
+    float mutateFactor = float_dist(mt);
+    int mutatedWeightId = uniform_dist(mt);
+
+    brainWeights[mutatedWeightId] = (brainWeights[mutatedWeightId] * mutateFactor) / 2.0;
+    brain.setWeights(brainWeights);
+
+}
+
+void animal::setNewBrainWeights(std::vector<float>& newWeights)
+{
+    brain.setWeights(newWeights);
+}
+
+void animal::resetBrain()
+{
+    std::vector<float> brainWeights; brain.getWeights(brainWeights);
+
+    std::uniform_real_distribution<float> new_weight(-3.2, 3.2);
+    for(int i = 0; i < brainWeights.size(); i++)
+    {
+        brainWeights[i] = new_weight(mt);
+    }
+
+    brain.setWeights(brainWeights);
+
+}
+
+void animal::resetFitnessScore()
+{
+    fitnessScore = 0;
+}
+
+void animal::draw(sf::RenderWindow& window)
+{
+      window.draw(this->shape);
 }
