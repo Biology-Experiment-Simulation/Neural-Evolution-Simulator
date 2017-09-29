@@ -21,9 +21,9 @@ void food::setPosition(int x, int y)
    this->shape.setPosition(x,y);
 }
 
-std::vector<int> food::getPosition()
+std::vector<float> food::getPosition()
 {
-    std::vector<int> pos;
+    std::vector<float> pos;
     pos.push_back(this->shape.getPosition().x);
     pos.push_back(this->shape.getPosition().y);
     return pos;

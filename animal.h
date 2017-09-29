@@ -16,9 +16,9 @@ class animal
         int fitnessScore = 0;
         unsigned closestFood = 0;
 
-        void runAnimal(std::vector<int>& input);
+        void runAnimal(std::vector<float>& input);
         void setPosition(int x, int y);
-        std::vector<int> getPosition();
+        std::vector<float> getPosition();
         void draw(sf::RenderWindow& window);
         void crossover(animal& matingPartner);
         void mutate();

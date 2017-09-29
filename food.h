@@ -11,7 +11,7 @@ class food
         food();
         virtual ~food();
         void setPosition(int x, int y);
-        std::vector<int> getPosition();
+        std::vector<float> getPosition();
         void draw(sf::RenderWindow& window);
     protected:
 

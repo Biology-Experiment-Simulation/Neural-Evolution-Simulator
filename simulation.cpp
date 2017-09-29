@@ -16,52 +16,30 @@ float Simulation::distance(float x1, float x2, float y1, float y2)
         float diffX = x1 - x2;
         return sqrt((diffY * diffY) + (diffX * diffX));
     }
-float Simulation::distance(std::vector<int> animalPos, std::vector<int> FoodPos)
+float Simulation::distance(std::vector<float> animalPos, std::vector<float> FoodPos)
     {
         float diffY = animalPos[1] - FoodPos[1];
         float diffX = animalPos[0] - FoodPos[0];
         return sqrt((diffY * diffY) + (diffX * diffX));
     }
 
-void Simulation::createFood(int number){
+void Simulation::createFood(int number)
+{
 
     for(int i=0;i<number;i++){
        std::shared_ptr<food> f(new food());
         this->foods.push_back(f);
     }
- /// //////////////// LEGACY //////////////////////////
-     for (int i=0;i<10;i++){
-    this->foody[i].setRadius(10 + 4);
-    this->foody[i].setOutlineThickness(2);
-    this->foody[i].setOutlineColor(sf::Color::Black);
-    this->foody[i].setFillColor(sf::Color::Green);
-    this->foody[i].setOrigin(10 / 2, 10 / 2);
-    this->foody[i].setPosition(rands(0,800),rands(0,600));
-    }
     std::cout << " created "  << number << "new food" << "\n" ;
 }
 
-void Simulation::createAnimals(int number){
-    //this->firstBest = 0; this->secondBest = 0;/// INPUTS
-    for(int i=0;i<number;i++){
+void Simulation::createAnimals(int number)
+{
+    for(int i=0;i<number;i++)
+        {
        std::shared_ptr<animal> a(new animal());
         this->animals.push_back(a);
-    }
-    for(int i=0;i<10;i++){
-       std::shared_ptr<NN::Net> c(new NN::Net(4,3,7,2));
-        this->brains.push_back(c);
-    }
- /// //////////////// LEGACY //////////////////////////
-    for (int i=0;i<10;i++){
-     animaly[i].setRadius(10 + 3);
-     animaly[i].setOutlineThickness(2);
-     animaly[i].setOutlineColor(sf::Color::Black);
-     animaly[i].setFillColor(sf::Color(rands(210,255),rands(110,255),rands(0,255)));
-     animaly[i].setOrigin(10 / 2, 10 / 2);
-     animaly[i].setPosition(rands(0,800),rands(0,600));
-    }
-
-    std::cout << " dsdsddd "  << " ;";
+        }
     }
 
 void Simulation::evolve()
@@ -134,21 +112,6 @@ void Simulation::setClosestFood(int creatureId)
      }
      (*animals[creatureId]).closestFood = closestId;
 
-
- /// //////////////// LEGACY //////////////////////////
-    closestDistance=99999;
-    float tempdist;
-    for(int i = 0; i<10; i++)
-    {
-       tempdist = distance(foody[i].getPosition().x, animaly[creatureId].getPosition().x, foody[i].getPosition().y, animaly[creatureId].getPosition().y);
-       if(tempdist < closestDistance)
-       {
-           closestDistance = tempdist;
-           closestId = i;
-       }
-    }
-    (*brains[creatureId]).closestFood = closestId;
-
 }
 
 void Simulation::setTwoBestAnimals()
@@ -156,10 +119,10 @@ void Simulation::setTwoBestAnimals()
     int c =0;
     int scoreA=-4000;
     int scoreB=-4000;
-
+        std::cout << "fitness scores" << "\n";
     for (auto& animal : animals )
     {
-        std::cout << (*animal).fitnessScore << std::endl;
+        std::cout << (*animal).fitnessScore << "\n";
         if((*animal).fitnessScore > scoreA)
         {
             scoreA = (*animal).fitnessScore;
@@ -174,99 +137,79 @@ void Simulation::setTwoBestAnimals()
         }
         c++;
     }
+std::cout << "first best = " << this->firstBest << "second best = " << this->secondBest << "\n";
 
-/// //////////////// LEGACY //////////////////////////
-    std::cout << "fitness scores" << std::endl;
-     c =0;
-     scoreA=-4000;
-     scoreB=-4000;
-    for (auto& it : brains)
-    {
-        std::cout << (*it).fitnessScore << std::endl;
-        if((*it).fitnessScore > scoreA)
-        {
-            scoreA = (*it).fitnessScore;
-            scoreB = scoreA;
-            this->secondBest = this->firstBest;
-            this->firstBest = c;
-        }
-        else if((*it).fitnessScore > scoreB)
-        {
-            scoreB = (*it).fitnessScore;
-            this->secondBest = c;
-        }
-        c++;
-    }
-    std::cout << "first best = " << this->firstBest << "second best = " << this->secondBest << std::endl;
+
+
 }
 
 void Simulation::proccessCreatures()
 {
     unsigned animalID = 0;
+    std::vector<float> closestFoodPos, animalPos;
      for (auto& animal : animals)
     {
         setClosestFood(animalID);
+        unsigned closestFoodId = (*animal).closestFood;
+
+        closestFoodPos = (*foods[closestFoodId]).getPosition();
+        animalPos = (*animal).getPosition();
+
+        if( closestFoodPos[0] < animalPos[0] ){/// na lewo
+            this->input[0]=1.0f + randomInput(mt);this->input[1]=-1.0f + randomInput(mt);
+        }else if(closestFoodPos[0] > animalPos[0]){ /// na prawo
+            this->input[0]=-1.0f + randomInput(mt);this->input[1]=1.0f + randomInput(mt);
+        }
+
+        if( closestFoodPos[1] < animalPos[1] ){ /// nizej
+            this->input[2]=1.0f + randomInput(mt);this->input[3]=-1.0f + randomInput(mt);
+        }else if(closestFoodPos[1] > animalPos[1]){ /// wyzej
+            this->input[2]=-1.0f + randomInput(mt) ;this->input[3]=1.0f + randomInput(mt);
+        }
+        (*animal).runAnimal(input);
+
+        ///  creatures Fitness Scoring
+        if (distance(animalPos, closestFoodPos) < 850)
+        {
+            (*animal).fitnessScore+= -1;
+
+        }
+        if (distance(animalPos, closestFoodPos) < 450)
+        {
+            (*animal).fitnessScore+= 1;
+
+        }
+        if (distance(animalPos, closestFoodPos) < 200)
+        {
+            (*animal).fitnessScore+= 2;
+        }
+        if (distance(animalPos, closestFoodPos) < 50)
+        {
+            (*animal).fitnessScore+= 4;
+        }
+        if (distance(animalPos, closestFoodPos) < 30)
+        {
+            (*animal).fitnessScore+= 6;
+        }
+        if (distance(animalPos, closestFoodPos) < 15)
+        {
+            (*animal).fitnessScore+= 7;
+        }
+
+        if (distance(animalPos, closestFoodPos) < 10)
+        {
+            (*animal).fitnessScore+= 233;
+            (*foods[closestFoodId]).setPosition(rands(0,800),rands(0,600));
+            unsigned izz = 0;
+            for(auto& animal : animals)
+            {
+                setClosestFood(izz);
+                izz++;
+            }
+
+        }
+        animalID++;
     }
-
-    /// //////////////// LEGACY //////////////////////////
-     for(int i=0; i<brains.size(); i++)
-                    {
-                        int j = (*brains[i]).closestFood;
-
-                        if(this->foody[j].getPosition().x < animaly[i].getPosition().x){/// na lewo
-                            this->input[0]=1.0f + randomInput(mt);this->input[1]=-1.0f + randomInput(mt);
-                        }else if(this->foody[j].getPosition().x > this->animaly[i].getPosition().x){ /// na prawo
-                            this->input[0]=-1.0f + randomInput(mt);this->input[1]=1.0f + randomInput(mt);
-                        }
-                        /// Creatures Brain inputs/ outputs
-                         if(this->foody[j].getPosition().y < this->animaly[i].getPosition().y){   /// nizej
-                            this->input[2]=1.0f + randomInput(mt);this->input[3]=-1.0f + randomInput(mt);
-                        }else if(this->foody[j].getPosition().y > this->animaly[i].getPosition().y){  /// wyzej
-                            this->input[2]=-1.0f + randomInput(mt) ;this->input[3]=1.0f + randomInput(mt);
-                        }
-                         this->output = (*brains[i]).feedForward(this->input);
-                        this->animaly[i].move(this->output[0]*4,this->output[1]*4);
-
-                        ///  creatures Brains Fitness Scoring
-                          if (distance(this->foody[j].getPosition().x, this->animaly[i].getPosition().x,this->foody[j].getPosition().y, this->animaly[i].getPosition().y) < 850)
-                        {
-                            (*brains[i]).fitnessScore+= -1;
-
-                        }
-                         if (distance(this->foody[j].getPosition().x, this->animaly[i].getPosition().x,this->foody[j].getPosition().y, this->animaly[i].getPosition().y) < 450)
-                        {
-                            (*brains[i]).fitnessScore+= 1;
-
-                        }
-                        if (distance(this->foody[j].getPosition().x, this->animaly[i].getPosition().x,this->foody[j].getPosition().y, this->animaly[i].getPosition().y) < 200)
-                        {
-                            (*brains[i]).fitnessScore+= 2;
-                        }
-                        if (distance(this->foody[j].getPosition().x, this->animaly[i].getPosition().x,this->foody[j].getPosition().y, this->animaly[i].getPosition().y) < 50)
-                        {
-                            (*brains[i]).fitnessScore+= 4;
-                        }
-                        if (distance(this->foody[j].getPosition().x, this->animaly[i].getPosition().x,this->foody[j].getPosition().y, this->animaly[i].getPosition().y) < 30)
-                        {
-                            (*brains[i]).fitnessScore+= 6;
-                        }
-                        if (distance(this->foody[j].getPosition().x, this->animaly[i].getPosition().x,this->foody[j].getPosition().y, this->animaly[i].getPosition().y) < 15)
-                        {
-                            (*brains[i]).fitnessScore+= 7;
-                        }
-
-                        if (distance(this->foody[j].getPosition().x, this->animaly[i].getPosition().x,this->foody[j].getPosition().y, this->animaly[i].getPosition().y) < 10)
-                        {
-                            (*brains[i]).fitnessScore+= 233;
-                            this->foody[j].setPosition(rands(0,800),rands(0,600));
-                             for (int i=0;i<10;i++){
-                            setClosestFood(i);
-                        }
-
-
-                        }
-
-                    }
 }
 
 void Simulation::runSimulation(sf::RenderWindow& window)
@@ -293,14 +236,14 @@ void Simulation::runSimulation(sf::RenderWindow& window)
         if (!isPlaying)
         {
             isPlaying = true;
-            for (int i=0; i<10; i++)
+            for(auto& food : foods)
             {
-                this->foody[i].setPosition(rands(0,800),rands(0,600));
+                (*food).setPosition(rands(0,800),rands(0,600));
             }
-            for (int i=0; i<10; i++)
+            for(auto& animal : animals)
             {
-                this->animaly[i].setPosition(rands(0,800),rands(0,600));
-                this->setClosestFood(i);
+                (*animal).setPosition(rands(0,800),rands(0,600));
+                (*animal).resetFitnessScore();
             }
         }
 
@@ -315,11 +258,12 @@ void Simulation::runSimulation(sf::RenderWindow& window)
                     this->setTwoBestAnimals();
                     this->evolve();
 
-                    for(int i=0; i<10; i++)
+                    for(auto& animal : animals)
                     {
-                        this->animaly[i].setPosition(rands(0,800),rands(0,600));
-                        (*brains[i]).fitnessScore = 0;
+                        (*animal).setPosition(rands(0,800),rands(0,600));
+                        (*animal).resetFitnessScore();
                     }
+
                     this->firstBest = 0;
                     this->secondBest = 0;
                     this->simulationTime =1499;
@@ -327,15 +271,17 @@ void Simulation::runSimulation(sf::RenderWindow& window)
                 }
                 if(this->simulationTime%500 == 0)
                 {
-                    for (int i=0; i<10; i++)
+                    for(auto& food : foods)
                     {
-                        this->foody[i].setPosition(rands(0,800),rands(0,600));
+                        (*food).setPosition(rands(0,800),rands(0,600));
                     }
-                    for (int i=0; i<10; i++)
+                    unsigned i = 0;
+                    for(auto& animal : animals)
                     {
-                        this->animaly[i].setPosition(rands(444,600),rands(200,500));
-                        this->setClosestFood(i);
+                        (*animal).setPosition(rands(0,800),rands(0,600));
+                         setClosestFood(i); i++;
                     }
+
                 }
                 AITimer.restart();
                 this->proccessCreatures();
@@ -347,10 +293,14 @@ void Simulation::runSimulation(sf::RenderWindow& window)
         }
         /// RENDER ALL /////////////////////////////////
         window.clear(sf::Color(20, 10, 250));
-        for(int i=0; i<brains.size(); i++)
+
+        for(auto& animal : animals)
         {
-            window.draw(this->animaly[i]);
-            window.draw(this->foody[i]);
+            (*animal).draw(window);
+        }
+        for(auto& food : foods)
+        {
+            (*food).draw(window);
         }
         window.display();
     }

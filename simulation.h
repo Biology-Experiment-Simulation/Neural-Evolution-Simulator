@@ -8,7 +8,7 @@
 
 /// .......... Random functions Data .............. //////////////
     static std::uniform_real_distribution<float> randomVal(-3.2, 3.4);
-    static std::uniform_real_distribution<float> randomInput(-0.2, 0.21);
+    static std::uniform_real_distribution<float> randomInput(-0.05, 0.05);
     static std::uniform_int_distribution<int> uniform_dist(0, 42);
 
     typedef std::shared_ptr<NN::Net> NetPtr;
@@ -26,11 +26,6 @@ private:
     std::vector<animalPtr> animals;
     std::vector<foodPtr> foods;
 
-
-    sf::CircleShape animaly[10];  /// LEGACY
-    sf::CircleShape foody[10];  /// LEGACY
-    std::vector<NetPtr> brains; /// LEGACY
-
     void setClosestFood(int creatureId);
     void setTwoBestAnimals();
     void evolve();
@@ -43,7 +38,7 @@ public:
     ~Simulation();
 
     static float distance(float x1, float x2, float y1, float y2);
-    static float distance(std::vector<int> animalPos, std::vector<int> FoodPos);
+    static float distance(std::vector<float> animalPos, std::vector<float> FoodPos);
 
     void setNetTopology(unsigned inputSize, unsigned hiddenLayerSize, unsigned hiddenLayers, unsigned outputSize);
     void createAnimals(int number);

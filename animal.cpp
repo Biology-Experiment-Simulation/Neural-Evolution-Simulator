@@ -16,14 +16,21 @@ animal::~animal()
    std::cout << "animal destroyed!" << "\n";
 }
 
+void animal::runAnimal(std::vector<float>& input)
+{
+    std::vector<float> output = brain.feedForward(input);
+    this->shape.move(output[0]*4,output[1]*4);
+
+}
+
 void animal::setPosition(int x, int y)
 {
    this->shape.setPosition(x,y);
 }
 
-std::vector<int> animal::getPosition()
+std::vector<float> animal::getPosition()
 {
-    std::vector<int> pos;
+    std::vector<float> pos;
     pos.push_back(this->shape.getPosition().x);
     pos.push_back(this->shape.getPosition().y);
     return pos;
