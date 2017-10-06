@@ -60,39 +60,6 @@ void Simulation::evolve()
 
     (*animals[animals.size()-1]).resetBrain();
     (*animals[animals.size()-2]).resetBrain();
-
-
-    /// //////////////// LEGACY //////////////////////////
-    /*std::vector<float> temps; temps.resize(this->bestWeights.size());
-    for(int i=5; i<8;i++)
-        {
-            crossover = uniform_dist(mt);
-            std::cout << " cross " << crossover << " ;";
-            for(int j=0;j<temps.size();j++)
-            {
-                if(crossover>j)
-                {temps[j]=this->bestWeights[j];}else
-                temps[j]=this->secondbestWeights[j];
-            }
-            (*brains[i]).setWeights(temps);
-        }
-
-        (*brains[0]).setWeights(this->bestWeights);
-        (*brains[1]).setWeights(this->bestWeights);
-        (*brains[2]).setWeights(this->secondbestWeights);
-
-        secondbestWeights[mutate] =randomVal(mt);
-        (*brains[3]).setWeights(this->secondbestWeights);
-        this->bestWeights[mutate] =randomVal(mt);
-        (*brains[4]).setWeights(this->bestWeights);
-
-    for(int i=0;i<temps.size();i++){
-        temps[i] = randomVal(mt);}
-     (*brains[8]).setWeights(temps);
-    for(int i=0;i<temps.size();i++){
-        temps[i] = randomVal(mt);}
-    (*brains[9]).setWeights(temps);
-    */
 }
 
 void Simulation::setClosestFood(int creatureId)
@@ -217,8 +184,11 @@ void Simulation::runSimulation(sf::RenderWindow& window)
     bool isPlaying = false;
     sf::Clock AITimer;
     const sf::Time AITime = sf::seconds(0.004f);
-    //sf::View view1(sf::FloatRect(200, 200, 800, 600));
-    //window.setView(view1);
+    float testx = 1.0f;
+    float testy = 1.0f;
+    sf::View view1(sf::FloatRect(2, 2, 800, 600));
+    view1.zoom(4.0f);
+    window.setView(view1);
 
     while (window.isOpen())
     {
@@ -230,6 +200,19 @@ void Simulation::runSimulation(sf::RenderWindow& window)
             {
                 window.close();
                 break;
+            }
+
+            if (event.type == sf::Event::EventType::KeyPressed){
+                if (event.key.code == sf::Keyboard::Down)
+                {
+                view1.zoom(0.994f);
+                window.setView(view1);
+                }
+                if (event.key.code == sf::Keyboard::Up)
+                {
+                view1.zoom(1.004f);
+                window.setView(view1);
+                }
             }
         }
 
@@ -286,9 +269,6 @@ void Simulation::runSimulation(sf::RenderWindow& window)
                 AITimer.restart();
                 this->proccessCreatures();
 
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            {
             }
         }
         /// RENDER ALL /////////////////////////////////

@@ -4,7 +4,7 @@ animal::animal() : brain(NN::Net(4,2,7,2))
 {
     this->shape.setRadius(10 + 3);
     this->shape.setOutlineThickness(2);
-    this->shape.setOutlineColor(sf::Color::Magenta);
+    this->shape.setOutlineColor(sf::Color::Yellow);
     this->shape.setFillColor(sf::Color(255,55,0));
     this->shape.setOrigin(10 / 2, 10 / 2);
     this->shape.setPosition(rands(0,800),rands(0,600));
